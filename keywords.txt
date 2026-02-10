@@ -1,0 +1,78 @@
+#######################################
+# Syntax Coloring Map For ADS1220_NTC_Extended
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+ADS1220_NTC_Extended	KEYWORD1
+ADS1220_Channel	KEYWORD1
+ADS1220_SensorMode	KEYWORD1
+HeatFluxCalibration	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+setChannelMode	KEYWORD2
+getChannelMode	KEYWORD2
+setNTCCoefficients	KEYWORD2
+setIDACCurrent	KEYWORD2
+setMeasuredIDACCurrent	KEYWORD2
+setMovingAverageSize	KEYWORD2
+setHeatFluxCalibration	KEYWORD2
+setHeatFluxSensitivity	KEYWORD2
+getHeatFluxCalibration	KEYWORD2
+readRaw	KEYWORD2
+readVoltage	KEYWORD2
+readResistance	KEYWORD2
+readTemperature	KEYWORD2
+readTemperatureFiltered	KEYWORD2
+readHeatFluxVoltage	KEYWORD2
+getTemperatureCorrectedSensitivity	KEYWORD2
+readHeatFlux	KEYWORD2
+readHeatFluxUncorrected	KEYWORD2
+readHeatFluxFiltered	KEYWORD2
+readThermalPower	KEYWORD2
+readThermalPowerFiltered	KEYWORD2
+setGain	KEYWORD2
+setDataRate	KEYWORD2
+setConversionMode	KEYWORD2
+startConversion	KEYWORD2
+dataReady	KEYWORD2
+powerDown	KEYWORD2
+reset	KEYWORD2
+printRegisters	KEYWORD2
+printLastReading	KEYWORD2
+printHeatFluxInfo	KEYWORD2
+testCommunication	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+CHANNEL_0	LITERAL1
+CHANNEL_1	LITERAL1
+MODE_NTC	LITERAL1
+MODE_HEAT_FLUX	LITERAL1
+ADS1220_MUX_AIN0_AIN1	LITERAL1
+ADS1220_MUX_AIN2_AIN3	LITERAL1
+ADS1220_GAIN_1	LITERAL1
+ADS1220_GAIN_2	LITERAL1
+ADS1220_GAIN_4	LITERAL1
+ADS1220_GAIN_8	LITERAL1
+ADS1220_GAIN_16	LITERAL1
+ADS1220_GAIN_32	LITERAL1
+ADS1220_GAIN_64	LITERAL1
+ADS1220_GAIN_128	LITERAL1
+ADS1220_DR_20SPS	LITERAL1
+ADS1220_DR_45SPS	LITERAL1
+ADS1220_DR_90SPS	LITERAL1
+ADS1220_DR_175SPS	LITERAL1
+ADS1220_DR_330SPS	LITERAL1
+ADS1220_DR_600SPS	LITERAL1
+ADS1220_DR_1000SPS	LITERAL1
+ADS1220_CM_SINGLE	LITERAL1
+ADS1220_CM_CONTINUOUS	LITERAL1
