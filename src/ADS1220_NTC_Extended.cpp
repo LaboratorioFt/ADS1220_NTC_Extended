@@ -46,6 +46,9 @@ ADS1220_NTC_Extended::ADS1220_NTC_Extended(uint8_t csPin, uint8_t drdyPin) {
     // Corriente IDAC por defecto
     _idacCurrent = ADS1220_IDAC_CURRENT;
     
+    // Ganancia por defecto
+    _currentGain = 1;
+    
     // Inicializar moving average
     _avgSize = 5;
     for (int ch = 0; ch < 2; ch++) {
@@ -103,6 +106,20 @@ bool ADS1220_NTC_Extended::begin(SPIClass *spiInstance) {
     // Configuración de registros
     _reg0 = ADS1220_MUX_AIN0_AIN1 | ADS1220_GAIN_1 | ADS1220_PGA_ENABLED;
     writeRegister(ADS1220_REG0, _reg0);
+    
+    // Extraer y guardar ganancia configurada
+    uint8_t gainBits = (_reg0 >> 1) & 0x07;
+    switch(gainBits) {
+        case 0: _currentGain = 1; break;
+        case 1: _currentGain = 2; break;
+        case 2: _currentGain = 4; break;
+        case 3: _currentGain = 8; break;
+        case 4: _currentGain = 16; break;
+        case 5: _currentGain = 32; break;
+        case 6: _currentGain = 64; break;
+        case 7: _currentGain = 128; break;
+        default: _currentGain = 1; break;
+    }
     
     _reg1 = ADS1220_DR_90SPS | ADS1220_MODE_NORMAL | ADS1220_CM_CONTINUOUS;
     writeRegister(ADS1220_REG1, _reg1);
@@ -368,8 +385,41 @@ float ADS1220_NTC_Extended::readThermalPowerFiltered(ADS1220_Channel channel, fl
 // =============================================================================
 
 void ADS1220_NTC_Extended::setGain(uint8_t gain) {
+    // Actualizar registro del hardware
     _reg0 = (_reg0 & 0xF1) | (gain & 0x0E);
     writeRegister(ADS1220_REG0, _reg0);
+    
+    // Guardar valor numérico de ganancia
+    // Convertir bits de registro a valor numérico
+    uint8_t gainBits = (gain >> 1) & 0x07;
+    switch(gainBits) {
+        case 0: _currentGain = 1; break;
+        case 1: _currentGain = 2; break;
+        case 2: _currentGain = 4; break;
+        case 3: _currentGain = 8; break;
+        case 4: _currentGain = 16; break;
+        case 5: _currentGain = 32; break;
+        case 6: _currentGain = 64; break;
+        case 7: _currentGain = 128; break;
+        default: _currentGain = 1; break;
+    }
+}
+
+void ADS1220_NTC_Extended::setPGABypass(bool bypass) {
+    // Bit 0 de Registro 0: PGA_BYPASS
+    // 0 = PGA habilitado (default)
+    // 1 = PGA deshabilitado (bypass)
+    
+    if (bypass) {
+        _reg0 |= ADS1220_PGA_BYPASSED;   // Set bit 0 = 1
+    } else {
+        _reg0 &= ~ADS1220_PGA_BYPASSED;  // Clear bit 0 = 0
+    }
+    
+    writeRegister(ADS1220_REG0, _reg0);
+    
+    // Nota: Al deshabilitar PGA, solo ganancias 1, 2, 4 están disponibles
+    // Ganancias mayores requieren PGA habilitado
 }
 
 void ADS1220_NTC_Extended::setDataRate(uint8_t dataRate) {
@@ -615,7 +665,11 @@ uint8_t ADS1220_NTC_Extended::_getCurrentRegisterSetting(float desiredCurrent_uA
 // =============================================================================
 
 float ADS1220_NTC_Extended::rawToVoltage(int32_t rawValue) {
-    return ((float)rawValue / (float)ADS1220_MAX_CODE) * ADS1220_VREF;
+    // Fórmula correcta del datasheet: VIN = (Code × VREF) / (Gain × 2^23)
+    // Donde 2^23 = 8,388,608 (usamos ADS1220_MAX_CODE = 8,388,607)
+    float numerator = (float)rawValue * ADS1220_VREF;
+    float denominator = (float)_currentGain * (float)ADS1220_MAX_CODE;
+    return numerator / denominator;
 }
 
 float ADS1220_NTC_Extended::voltageToResistance(float voltage) {

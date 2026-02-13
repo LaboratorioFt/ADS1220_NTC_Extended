@@ -323,6 +323,7 @@ public:
     
     // ===== FUNCIONES DE CONFIGURACIÓN DEL ADC =====
     void setGain(uint8_t gain);
+    void setPGABypass(bool bypass);
     void setDataRate(uint8_t dataRate);
     void setConversionMode(uint8_t mode);
     
@@ -358,6 +359,9 @@ private:
     
     // Corriente IDAC real (en amperes)
     float _idacCurrent;
+    
+    // Ganancia actual del PGA (valor numérico: 1, 2, 4, 8, 16, 32, 64, 128)
+    uint8_t _currentGain;
     
     // Buffer para moving average (usado tanto para NTC como para Heat Flux)
     static const uint8_t MAX_AVG_SIZE = 20;
